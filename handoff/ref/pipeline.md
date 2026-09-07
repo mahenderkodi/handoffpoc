@@ -12,10 +12,8 @@ it does not exist for the next agent.
 
 ## 0. Preflight guard
 
-Confirm there is real work to hand off — a non-trivial conversation (more than ~2 substantive
-exchanges) or 5+ file edits. If essentially nothing has happened, reply `Nothing to hand off yet`
-and stop. **Never fabricate progress.** (oh-my-pi aborts the handoff command when the session has
-fewer than 2 messages.)
+Capture the known goal and next action even in an early session. If neither exists, reply
+`Nothing to hand off yet`. Never fabricate progress or use message/file counts to reject a useful handoff.
 
 ## 1. Gather state mechanically, not from memory
 
