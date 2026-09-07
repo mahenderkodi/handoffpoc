@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Writes a structured markdown handoff file so a fresh-context agent can resume a long-running task. Use near the context limit, at a milestone or session end, or when asked to create a handoff / save state / "핸드오프 만들어".
+description: Save task state in a structured Markdown handoff for a fresh-context agent. Use when asked to hand off, save state, or prepare a session for continuation.
 ---
 
 # handoff
@@ -12,15 +12,14 @@ context window resumes exactly where you left off — without re-reading the con
 ## When to use
 
 **Manual** — the user asked: a handoff / state save / "next plan of action". Write the file.
-**Threshold** — you fired on your own: context window ~80%+ full, 5+ file edits, or a milestone or
-work session ending. Write the file *and* append the auto-continue note (step 7).
+**Automatic checkpoint** — when the host requests a context handoff, write the file and append the auto-continue note (step 7). A file-edit count alone is not a reason to interrupt authorized work.
 
 ## Pipeline (summary)
 
 **gather → structure → write → verify → resume**. Full detail in
 [ref/pipeline.md](ref/pipeline.md).
 
-0. **Preflight.** Hand off only when there is real work: more than ~2 substantive exchanges, or 5+ file edits. Otherwise say "Nothing to hand off yet" and stop — never fabricate.
+0. **Preflight.** Capture the known goal and next action even if little work has happened. If neither exists, say "Nothing to hand off yet"; never fabricate progress.
 1. **Gather mechanically.** Derive read/modified sets from tool history; capture commands, test output, and error text verbatim; confirm git branch/HEAD/dirty via read-only probes. Never trust recall.
 2. **Preserve the open thread.** Capture any unanswered user question VERBATIM (the most-failed item) → Open Questions, and Current State if it blocks the next step.
 3. **Structure.** Fill `ref/templates/handoff.md` — `-coding.md` for a feature build, `-debugging.md` for an investigation — in order: Current State first; Done labeled "DO NOT REDO" + quantified; ONE next step; decisions with rationale; concrete file:line / commands / real errors.
