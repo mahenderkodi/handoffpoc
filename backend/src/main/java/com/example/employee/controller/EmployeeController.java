@@ -2,6 +2,7 @@ package com.example.employee.controller;
 
 import com.example.employee.dto.EmployeeCreateRequest;
 import com.example.employee.dto.EmployeeResponse;
+import com.example.employee.dto.EmployeeUpdateRequest;
 import com.example.employee.entity.EmployeeStatus;
 import com.example.employee.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,8 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 /**
- * Create, list/search, and get-by-id are implemented so far — update and delete
- * (Section 7) will follow in later slices.
+ * Create, list/search, get-by-id, and update are implemented so far — delete
+ * (Section 7) will follow in a later slice.
  */
 @RestController
 @RequestMapping("/api/employees")
@@ -56,5 +58,12 @@ public class EmployeeController {
     public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) {
         EmployeeResponse response = employeeService.getEmployee(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeResponse> update(@PathVariable Long id,
+                                                     @Valid @RequestBody EmployeeUpdateRequest request) {
+        EmployeeResponse updated = employeeService.updateEmployee(id, request);
+        return ResponseEntity.ok(updated);
     }
 }

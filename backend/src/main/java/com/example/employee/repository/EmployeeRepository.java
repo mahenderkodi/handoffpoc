@@ -18,6 +18,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     boolean existsByEmployeeCode(String employeeCode);
 
+    boolean existsByEmailAndIdNot(String email, Long id);
+
     @Query("SELECT e FROM Employee e WHERE (:q IS NULL OR lower(e.firstName) LIKE lower(concat('%', :q, '%')) "
             + "OR lower(e.lastName) LIKE lower(concat('%', :q, '%')) OR lower(e.email) LIKE lower(concat('%', :q, '%'))) "
             + "AND (:status IS NULL OR e.status = :status)")

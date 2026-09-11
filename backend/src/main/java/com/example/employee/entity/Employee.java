@@ -129,4 +129,39 @@ public class Employee {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+    // employeeCode, id, createdAt intentionally have no setters — Section 5.2:
+    // employeeCode is immutable after creation, and id/createdAt are system-managed.
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public void setDateOfJoining(LocalDate dateOfJoining) {
+        this.dateOfJoining = dateOfJoining;
+    }
+
+    public void setStatus(EmployeeStatus status) {
+        this.status = status;
+    }
 }

@@ -2,6 +2,7 @@ package com.example.employee.service;
 
 import com.example.employee.dto.EmployeeCreateRequest;
 import com.example.employee.dto.EmployeeResponse;
+import com.example.employee.dto.EmployeeUpdateRequest;
 import com.example.employee.entity.Employee;
 import com.example.employee.entity.EmployeeStatus;
 import com.example.employee.exception.DuplicateEmployeeException;
@@ -60,5 +61,26 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
         return EmployeeMapper.toResponse(employee);
+    }
+
+    @Override
+    @Transactional
+    public EmployeeResponse updateEmployee(Long id, EmployeeUpdateRequest request) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+
+        // Section 5.2: reject if the new email belongs to a DIFFERENT existing employee.
+        if (employeeRepository.existsByEmailAndIdNot(request.getEmail(), id)) {
+            throw new DuplicateEmployeeException("email", request.getEmail());
+        }
+
+        // employeeCode is never touched here — EmployeeUpdateRequest has no such field
+        // (Section 5.2: employeeCode must stay immutable after creation).
+        EmployeeMapper.applyUpdate(employee, request);
+        Employee saved = employeeRepository.save(employee);
+
+        log.info("Updated employee id={}", saved.getId());
+
+        return EmployeeMapper.toResponse(saved);
     }
 }
