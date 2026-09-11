@@ -23,8 +23,9 @@ import static org.mockito.Mockito.*;
 
 /**
  * Section 11: "Unit test the service layer with the repository mocked: cover duplicate-email
- * rejection, duplicate-code rejection..." (not-found handling and employeeCode immutability
- * on update are out of scope here — this slice only implements Create).
+ * rejection, duplicate-code rejection..." (not-found handling is covered in
+ * {@link EmployeeServiceGetByIdTest}; employeeCode immutability on update is out of scope here —
+ * this slice does not implement Update).
  */
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceImplTest {

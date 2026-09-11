@@ -5,6 +5,7 @@ import com.example.employee.dto.EmployeeResponse;
 import com.example.employee.entity.Employee;
 import com.example.employee.entity.EmployeeStatus;
 import com.example.employee.exception.DuplicateEmployeeException;
+import com.example.employee.exception.EmployeeNotFoundException;
 import com.example.employee.mapper.EmployeeMapper;
 import com.example.employee.repository.EmployeeRepository;
 import org.slf4j.Logger;
@@ -51,5 +52,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         String query = (q == null || q.isBlank()) ? null : q.trim();
         Page<Employee> results = employeeRepository.search(query, status, pageable);
         return results.map(EmployeeMapper::toResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EmployeeResponse getEmployee(Long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id));
+        return EmployeeMapper.toResponse(employee);
     }
 }

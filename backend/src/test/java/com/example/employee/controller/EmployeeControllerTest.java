@@ -24,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Section 11: "Test the controller layer in isolation (mock the service): cover a valid create
- * returning 201, an invalid payload returning 400 with the expected error shape..." (a missing
- * employee returning 404 is out of scope here — no GET endpoint exists in this slice yet).
+ * returning 201, an invalid payload returning 400 with the expected error shape..." (404 for a
+ * missing employee is covered in {@link EmployeeControllerGetByIdTest}).
  */
 @WebMvcTest(EmployeeController.class)
 class EmployeeControllerTest {

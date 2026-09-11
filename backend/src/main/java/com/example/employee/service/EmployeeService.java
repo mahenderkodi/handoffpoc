@@ -15,4 +15,6 @@ public interface EmployeeService {
     EmployeeResponse createEmployee(EmployeeCreateRequest request);
 
     Page<EmployeeResponse> listEmployees(String q, EmployeeStatus status, Pageable pageable);
+
+    EmployeeResponse getEmployee(Long id);
 }

@@ -21,9 +21,8 @@ import java.util.List;
  * controller method needs its own try/catch. Every response body follows the exact shape
  * documented in IMPLEMENTATION_INSTRUCTIONS.md Section 9.
  *
- * <p>{@link com.example.employee.exception.EmployeeNotFoundException} is intentionally not
- * handled here yet: no endpoint that can raise it (GET by id, update, delete) exists in this
- * first slice. It will be added alongside those endpoints.
+ * <p>{@link com.example.employee.exception.EmployeeNotFoundException} handling covers GET by id;
+ * update and delete will raise it too once those endpoints exist.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -55,6 +54,17 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), request.getRequestURI(),
                 List.of(new FieldErrorDto(ex.getField(), "already in use")));
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFound(EmployeeNotFoundException ex,
+                                                              HttpServletRequest request) {
+        log.warn("Employee not found on {}: {}", request.getRequestURI(), ex.getMessage());
+
+        ApiErrorResponse body = new ApiErrorResponse(
+                Instant.now(), HttpStatus.NOT_FOUND.value(), "NOT_FOUND",
+                ex.getMessage(), request.getRequestURI(), List.of());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)

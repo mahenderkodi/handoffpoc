@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 /**
- * Only POST /api/employees is implemented in this first slice — list/search, get-by-id,
- * update, and delete (Section 7) will follow in later slices.
+ * Create, list/search, and get-by-id are implemented so far — update and delete
+ * (Section 7) will follow in later slices.
  */
 @RestController
 @RequestMapping("/api/employees")
@@ -49,5 +50,11 @@ public class EmployeeController {
 
         Page<EmployeeResponse> page = employeeService.listEmployees(q, status, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id) {
+        EmployeeResponse response = employeeService.getEmployee(id);
+        return ResponseEntity.ok(response);
     }
 }
