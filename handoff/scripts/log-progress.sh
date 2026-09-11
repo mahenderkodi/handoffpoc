@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# handoff-hook-test
 # PostToolUse hook: mechanically logs what changed, for the handoff skill's
 # periodic-synthesis auto-update mode. Never blocks or fails the tool call
 # it's watching -- always exits 0, writes nothing to stdout.
