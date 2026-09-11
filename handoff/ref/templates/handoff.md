@@ -6,7 +6,7 @@
 ## Metadata
 - Project: {{project_path}}
 - Git branch: {{git_branch}} · HEAD: {{git_head_short}} · Tree: {{clean_or_dirty}}
-- Author: {{author}} (from `git config user.name`/`user.email`)
+- Author: {{author}} (from `gh api user`, falling back to `git config user.name`/`user.email`)
 - Agent / model: {{agent_model}}
 
 ## Current State (read this first)

@@ -3,11 +3,14 @@ package com.example.employee.service;
 import com.example.employee.dto.EmployeeCreateRequest;
 import com.example.employee.dto.EmployeeResponse;
 import com.example.employee.entity.Employee;
+import com.example.employee.entity.EmployeeStatus;
 import com.example.employee.exception.DuplicateEmployeeException;
 import com.example.employee.mapper.EmployeeMapper;
 import com.example.employee.repository.EmployeeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +43,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Created employee id={}", saved.getId());
 
         return EmployeeMapper.toResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<EmployeeResponse> listEmployees(String q, EmployeeStatus status, Pageable pageable) {
+        String query = (q == null || q.isBlank()) ? null : q.trim();
+        Page<Employee> results = employeeRepository.search(query, status, pageable);
+        return results.map(EmployeeMapper::toResponse);
     }
 }

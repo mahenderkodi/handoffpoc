@@ -6,7 +6,7 @@
 ## Metadata
 - Project: /home/dev/acme-api
 - Git branch: feat/refresh-tokens · HEAD: 9f3c1ab · Tree: dirty (3 modified, 1 untracked)
-- Author: jordan-lee (from `git config user.name`/`user.email`)
+- Author: jordan-lee (from `gh api user`, falling back to `git config user.name`/`user.email`)
 - Agent / model: Claude Code (opus)
 
 ## Current State (read this first)

@@ -6,7 +6,7 @@
 ## Metadata
 - Project: /home/dev/acme-api
 - Git branch: fix/reports-500 · HEAD: 2b7de04 · Tree: clean
-- Author: alex-chen (from `git config user.name`/`user.email`)
+- Author: alex-chen (from `gh api user`, falling back to `git config user.name`/`user.email`)
 - Agent / model: Claude Code (opus)
 
 ## Current State (read this first)

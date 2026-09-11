@@ -28,13 +28,19 @@ text. Derive them from evidence instead.
   lint run. Quote failures and error messages **verbatim**.
 - **Live repo state.** Run read-only probes and record the output:
   ```bash
-  git rev-parse --abbrev-ref HEAD   # branch
-  git rev-parse --short HEAD        # HEAD commit
-  git status --porcelain            # clean vs dirty, untracked
-  git config user.name              # author identity for the filename + Metadata
+  git rev-parse --abbrev-ref HEAD       # branch
+  git rev-parse --short HEAD            # HEAD commit
+  git status --porcelain                # clean vs dirty, untracked
+  gh api user --jq .login 2>/dev/null   # GitHub login of whoever is authenticated to push
+  git config user.name                  # fallback: local git identity
   ```
-  If `user.name` is unset, fall back to the local part of `git config user.email`, then to
-  `unknown`. Never ask the user or guess an identity — this is a mechanical probe like the others.
+  Author identity resolves to whoever is actually pushing, not a name typed into local config once
+  and forgotten: prefer the GitHub login from `gh api user` (requires the `gh` CLI installed and
+  authenticated) — this is dynamic by construction, since it reads the credentials active on
+  whichever machine/session runs the skill, so a different developer pushing from their own login
+  gets their own name automatically. If `gh` is missing or not authenticated, fall back to `git
+  config user.name`, then the local part of `git config user.email`, then `unknown`. Never ask the
+  user or guess an identity — this is a mechanical probe like the others.
 
 ## 2. Preserve the open thread
 
@@ -80,18 +86,23 @@ skill's repo). The timestamp is ISO 8601 with `:` and `.` replaced by `-` — oh
 new Date().toISOString().replace(/[:.]/g, "-")  ->  2026-05-30T12-00-00-000Z
 ```
 
-**Author slug.** Take `git config user.name` (fallback: the local part of `git config
-user.email`; final fallback: `unknown`) — the same value recorded in step 1 — lowercase it,
+**Author slug.** Take the identity resolved in step 1 — `gh api user --jq .login` when the `gh`
+CLI is installed and authenticated (the GitHub account actually pushing right now), else `git
+config user.name`, else the local part of `git config user.email`, else `unknown` — lowercase it,
 replace every run of characters outside `[a-z0-9]` with a single `-`, and trim leading/trailing
 `-`. Do not truncate; keep the whole slug so two people with similar names stay distinguishable.
+Resolving from the authenticated pusher rather than a fixed local display name is what makes this
+dynamic across developers: run the skill under a different person's `gh` login (or, absent `gh`,
+their own `git config user.name`) and their identity appears automatically — nothing here is
+hardcoded to one person or one machine.
 
 ```
-git config user.name  ->  "Ganesh Kumar S"  ->  ganesh-kumar-s
-handoff-2026-05-30T12-00-00-000Z-ganesh-kumar-s.md
+gh api user --jq .login  ->  "mahenderkodi"  ->  mahenderkodi
+handoff-2026-05-30T12-00-00-000Z-mahenderkodi.md
 ```
 
 Timestamp stays first so `ls`/`sort` on `handoffs/` still lists files in chronological order;
-the author slug is a suffix, filterable with e.g. `ls handoffs/ | grep ganesh-kumar-s`.
+the author slug is a suffix, filterable with e.g. `ls handoffs/ | grep mahenderkodi`.
 
 Create the `handoffs/` directory if missing. **Chaining:** if a prior handoff exists, set the
 Handoff Chain `Continues from` link, and when re-handing-off, *merge* rather than overwrite — keep
@@ -103,7 +114,7 @@ stale pending questions (oh-my-pi's `compaction-update-summary` pattern).
 Print:
 1. the absolute saved path, and
 2. a one-line summary of the state, then
-3. the ready-to-paste resume block (oh-my-pi's `createHandoffContext` wrapper, verbatim):
+3. the ready-to-paste resume block (oh-my-pi's `createHandoffContext` wrapper, adapted):
 
 ```
 <handoff-context>
@@ -141,3 +152,4 @@ manual trigger, omit this — the user is present and steering.
 | Trusts a stale doc | No environment anchor | Metadata git branch/HEAD + `check-staleness.sh` |
 | Hallucinated paths/counts | Written from memory | Gather mechanically, never from recall (step 1) |
 | Leaks credentials | Pasted raw command output | Quality gate rejects secrets (step 4) |
+| Unclear who authored a handoff | No identity captured | Author from the authenticated GitHub login (`gh`), falling back to `git config`, in filename + Metadata (steps 1, 5) |

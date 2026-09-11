@@ -54,6 +54,54 @@ like an edit count:
 Output lands in `handoffs/` in your working project. Other agents (Codex, Gemini) can use it too —
 point them at `handoff/SKILL.md`.
 
+## Automatic updates (optional)
+
+The core skill above is always manual-or-explicit-trigger — that's deliberate (see `SKILL.md`'s
+"When to use"), because regenerating a full handoff on every edit would be both noisy and
+expensive. If you want handoffs to stay current with less remembering-to-ask, two optional scripts
+add a two-tier automation on top, without changing that default:
+
+1. **Mechanical logging, always on, zero cost.** `handoff/scripts/log-progress.sh`, wired as a
+   Claude Code `PostToolUse` hook, appends one line per file edit or command run to
+   `handoffs/.progress.log` — no AI call, just a fact log. Requires `jq`.
+2. **Real synthesis, only at milestones.** `handoff/scripts/trigger-handoff-update.sh`, wired as a
+   git `post-commit` hook (a commit is a real milestone), reads that log and invokes Claude Code
+   headlessly to merge it into the latest handoff, then rotates the log. Requires the `claude` CLI
+   on `PATH`.
+
+Setup — in the **working project** (not this skill's own repo), add to `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      { "matcher": "Edit|Write|MultiEdit|Bash",
+        "hooks": [ { "type": "command", "command": "handoff/scripts/log-progress.sh" } ] }
+    ]
+  }
+}
+```
+
+and, from the project's repo root, install the git hook once:
+
+```bash
+cat > .git/hooks/post-commit <<'EOF'
+#!/usr/bin/env bash
+exec "$(git rev-parse --show-toplevel)/handoff/scripts/trigger-handoff-update.sh"
+EOF
+chmod +x .git/hooks/post-commit
+```
+
+**Read the safety note at the top of `trigger-handoff-update.sh` before enabling it.** It runs
+Claude Code with `--dangerously-skip-permissions` — required for an unattended run to do anything
+at all, since there's no one present to approve tool calls, but it is a real, blanket grant, not
+sandboxed by the script to only the handoff skill's own reads/writes. If that's not a trade you
+want, use `--allowedTools` scoped to `handoffs/*.md` instead, or skip the git hook and keep
+triggering updates manually or via `PreCompact` only.
+
+Both scripts are optional add-ons layered on top of the skill, not part of its core pipeline —
+skip this section entirely and the skill works exactly as described above, dependency-free.
+
 ## Layout
 
 ```
@@ -63,6 +111,8 @@ handoff/                      the skill (folder name = skill name)
   ref/templates/handoff*.md   general / coding / debugging templates
   ref/checklists/*.md         authoring gate + receiving-agent checklist
   scripts/check-staleness.sh  validate a handoff before trusting it
+  scripts/log-progress.sh          optional: PostToolUse mechanical logger
+  scripts/trigger-handoff-update.sh  optional: milestone-triggered auto-update
   examples/                   filled handoffs (coding + debugging)
 docs/index.html               GitHub Pages landing page
 README.md · LICENSE · log/    repo meta
