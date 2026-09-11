@@ -45,8 +45,9 @@ ln -s "$PWD/agent-handoff/handoff" ~/.claude/skills/handoff   # Claude Code
 ln -s "$PWD/agent-handoff/handoff" ~/.codex/skills/handoff    # Codex
 ```
 
-Then in Claude Code, the skill auto-triggers near ~80% context, on milestones, or after 5+ edits —
-or invoke it explicitly:
+Invoke it explicitly, or let your harness trigger it automatically — e.g. Claude Code's
+`PreCompact` hook, right before context gets compacted. It never self-triggers from a heuristic
+like an edit count:
 
 > create a handoff · 핸드오프 만들어 · summarize where we left off · next plan of action
 

@@ -6,6 +6,7 @@
 ## Metadata
 - Project: /home/dev/acme-api
 - Git branch: fix/reports-500 · HEAD: 2b7de04 · Tree: clean
+- Author: alex-chen (from `git config user.name`/`user.email`)
 - Agent / model: Claude Code (opus)
 
 ## Current State (read this first)
@@ -70,4 +71,4 @@ Expected once fixed: 20/20 return 200; `pg_pool_waiting` stays ≤1; export test
 
 ## Handoff Chain
 - Continues from: none
-- This doc: handoffs/handoff-2026-05-30T15-30-00-000Z.md
+- This doc: handoffs/handoff-2026-05-30T15-30-00-000Z-alex-chen.md

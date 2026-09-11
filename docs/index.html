@@ -255,11 +255,11 @@
 <span class="o">✓ skill "handoff" available</span>
     </div>
     <div class="pills">
-      <span class="pill i18n" data-ko="<b>~80% 컨텍스트</b>에서 자동 트리거">auto-triggers at <b>~80% context</b></span>
+      <span class="pill i18n" data-ko="호스트 훅(예: PreCompact)에서 자동 트리거">auto-triggers via a host hook (e.g. PreCompact)</span>
       <span class="pill">or say: <b>create a handoff</b> / <b>핸드오프 만들어</b></span>
       <span class="pill i18n" data-ko="Codex·Gemini: <b>handoff/SKILL.md</b>를 가리키게">Codex / Gemini: point at <b>handoff/SKILL.md</b></span>
     </div>
-    <p class="note i18n" data-ko="명시적으로 'create a handoff'로 부르거나, 마일스톤·파일 5개 이상 수정 시 자동 실행되게 두세요. 출력은 작업 프로젝트의 handoffs/ 에 생성됩니다.">Invoke it explicitly with "create a handoff", or let it trigger on a milestone or after 5+ edits. Output lands in handoffs/ in your working project.</p>
+    <p class="note i18n" data-ko="명시적으로 'create a handoff'라고 부르거나, 호스트가 자동으로 트리거하게 두세요(예: Claude Code의 PreCompact 훅) — 파일 수정 횟수 같은 휴리스틱으로는 트리거되지 않습니다. 출력은 작업 프로젝트의 handoffs/ 에 생성됩니다.">Invoke it explicitly with "create a handoff", or let your harness trigger it automatically (e.g. Claude Code's PreCompact hook) — never from an edit-count heuristic. Output lands in handoffs/ in your working project.</p>
   </section>
 
   <!-- 05 EXAMPLE -->

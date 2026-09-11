@@ -31,7 +31,10 @@ text. Derive them from evidence instead.
   git rev-parse --abbrev-ref HEAD   # branch
   git rev-parse --short HEAD        # HEAD commit
   git status --porcelain            # clean vs dirty, untracked
+  git config user.name              # author identity for the filename + Metadata
   ```
+  If `user.name` is unset, fall back to the local part of `git config user.email`, then to
+  `unknown`. Never ask the user or guess an identity — this is a mechanical probe like the others.
 
 ## 2. Preserve the open thread
 
@@ -69,12 +72,26 @@ Run `ref/checklists/quality.md`. Reject and fix the draft if it:
 
 ## 5. Write the file
 
-Save to `handoffs/handoff-<UTC-timestamp>.md` **in the working project** (not in this skill's repo).
-The timestamp is ISO 8601 with `:` and `.` replaced by `-` — oh-my-pi's `createHandoffFileName`:
+Save to `handoffs/handoff-<UTC-timestamp>-<author>.md` **in the working project** (not in this
+skill's repo). The timestamp is ISO 8601 with `:` and `.` replaced by `-` — oh-my-pi's
+`createHandoffFileName`, extended with an author slug:
 
 ```
-new Date().toISOString().replace(/[:.]/g, "-")  ->  handoff-2026-05-30T12-00-00-000Z.md
+new Date().toISOString().replace(/[:.]/g, "-")  ->  2026-05-30T12-00-00-000Z
 ```
+
+**Author slug.** Take `git config user.name` (fallback: the local part of `git config
+user.email`; final fallback: `unknown`) — the same value recorded in step 1 — lowercase it,
+replace every run of characters outside `[a-z0-9]` with a single `-`, and trim leading/trailing
+`-`. Do not truncate; keep the whole slug so two people with similar names stay distinguishable.
+
+```
+git config user.name  ->  "Ganesh Kumar S"  ->  ganesh-kumar-s
+handoff-2026-05-30T12-00-00-000Z-ganesh-kumar-s.md
+```
+
+Timestamp stays first so `ls`/`sort` on `handoffs/` still lists files in chronological order;
+the author slug is a suffix, filterable with e.g. `ls handoffs/ | grep ganesh-kumar-s`.
 
 Create the `handoffs/` directory if missing. **Chaining:** if a prior handoff exists, set the
 Handoff Chain `Continues from` link, and when re-handing-off, *merge* rather than overwrite — keep
@@ -93,7 +110,9 @@ Print:
 …the full handoff document…
 </handoff-context>
 
-The above is a handoff document from a previous session. Use this context to continue the work seamlessly.
+The above is a handoff document from a previous session. Before continuing, check staleness
+(compare the Metadata git branch/HEAD to the live repo, or run `scripts/check-staleness.sh
+<path>`) and follow `ref/checklists/resume.md`. Then continue the work seamlessly.
 ```
 
 Do **not** continue the task or answer the conversation's questions. Output only the artifact and
@@ -101,10 +120,12 @@ where it lives.
 
 ## 7. Auto-continue note (automatic trigger only)
 
-On a threshold/automatic trigger (context near full, no human steering at that moment), append a
-short note instructing the resuming agent to **honor the user's latest intent over older recorded
-plans**, and to say so briefly if nothing remains rather than inventing busywork. On a manual
-trigger, omit this — the user is present and steering.
+"Automatic trigger" means the calling host/harness explicitly signalled a context handoff — an
+`auto` invocation flag, or a harness hook like Claude Code's `PreCompact` — never a self-imposed
+heuristic such as an edit count (see `SKILL.md`'s "When to use"). On a genuine automatic trigger,
+append a short note instructing the resuming agent to **honor the user's latest intent over older
+recorded plans**, and to say so briefly if nothing remains rather than inventing busywork. On a
+manual trigger, omit this — the user is present and steering.
 
 ---
 

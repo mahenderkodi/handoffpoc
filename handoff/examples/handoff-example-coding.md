@@ -6,6 +6,7 @@
 ## Metadata
 - Project: /home/dev/acme-api
 - Git branch: feat/refresh-tokens · HEAD: 9f3c1ab · Tree: dirty (3 modified, 1 untracked)
+- Author: jordan-lee (from `git config user.name`/`user.email`)
 - Agent / model: Claude Code (opus)
 
 ## Current State (read this first)
@@ -86,4 +87,4 @@ Expected: rotation.test.ts 3/3 pass; full auth suite 90/90; reuse of a consumed 
 
 ## Handoff Chain
 - Continues from: none
-- This doc: handoffs/handoff-2026-05-30T12-00-00-000Z.md
+- This doc: handoffs/handoff-2026-05-30T12-00-00-000Z-jordan-lee.md
