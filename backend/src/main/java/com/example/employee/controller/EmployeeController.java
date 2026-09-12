@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-/**
- * Create, list/search, get-by-id, and update are implemented so far — delete
- * (Section 7) will follow in a later slice.
- */
+/** REST controller exposing the CRUD and search endpoints for employees. */
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
@@ -65,5 +63,11 @@ public class EmployeeController {
                                                      @Valid @RequestBody EmployeeUpdateRequest request) {
         EmployeeResponse updated = employeeService.updateEmployee(id, request);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.noContent().build();
     }
 }

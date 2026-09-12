@@ -20,4 +20,6 @@ public interface EmployeeService {
     EmployeeResponse getEmployee(Long id);
 
     EmployeeResponse updateEmployee(Long id, EmployeeUpdateRequest request);
+
+    void deleteEmployee(Long id);
 }
