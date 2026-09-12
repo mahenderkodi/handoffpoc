@@ -1,0 +1,25 @@
+# Common config shared by every profile. DB connection details, CORS origin, and SQL-init
+# behavior are set per-profile (application-dev.yml / -test.yml / -prod.yml) — Section 12.
+spring:
+  application:
+    name: employee-management
+  jpa:
+    hibernate:
+      # Never auto-generate or alter the schema — db/schema.sql is the single source of truth,
+      # this only checks the entity mapping against it (Section 6 / Section 12).
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
+
+logging:
+  level:
+    com.example.employee: INFO
