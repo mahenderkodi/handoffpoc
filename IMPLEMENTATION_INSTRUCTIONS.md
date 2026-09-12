@@ -343,3 +343,17 @@ Keep this Compose setup strictly for local development — do not attempt to mak
 - `docker compose up --build` produces a fully working stack from a clean checkout.
 - Backend and frontend test suites from Section 11 pass.
 - Nothing from the "out of scope" list in Section 2 has been added.
+
+---
+
+## Appendix A — Continuing this build from a Claude Cowork session (operational note)
+
+This section is **operational guidance, not a functional requirement** — it doesn't change anything in Sections 1–16. It exists because this POC has been built across two different kinds of Claude sessions: a local **Claude Code CLI** session (real shell, real `git`, can run `mvn`/push directly) and a cloud **Cowork** session linked to this repo through the desktop app's device bridge (file read/write only, no shell). The two have different constraints, and this note is for the second kind.
+
+**The constraint:** the device bridge can only read a file that sits at most **7 folders below whatever folder was connected** from the desktop app (originally `C:\handsoff\agent-handoff`). Re-requesting access to a folder that's already inside a connected one does **not** reset that count — only connecting a genuinely new folder from the desktop app does.
+
+**Why this project hits it easily:** Java's package-per-directory convention nests deep fast. `backend/src/main/java/com/example/employee/controller/EmployeeController.java` is 8 folders below the repo root — one over the limit — and every layer added under `com.example.employee` (`service`, `repository`, `dto`, `exception`, `mapper`, …) is exactly as deep.
+
+**The fix, going forward:** if a Cowork session needs to read or edit files under `backend/src/main/java/com/example/employee/...` and hits this, connect a deeper folder directly from the desktop app — e.g. `C:\handsoff\agent-handoff\backend` (puts every file at 7 folders or fewer) or, if still too deep, `C:\handsoff\agent-handoff\backend\src\main\java\com\example\employee` directly (puts every file at 5 or fewer). This only needs doing once per depth level, not per file. If connecting a new folder isn't convenient in the moment, pasting the needed file's content directly into the chat is the immediate fallback.
+
+This same constraint does not apply to a local Claude Code CLI session, which reads the filesystem directly with no depth limit — it's specific to the cloud/device-bridge setup.

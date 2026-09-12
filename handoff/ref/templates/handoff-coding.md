@@ -1,7 +1,8 @@
 # Handoff — {{feature_name}} (feature build)
 
-> Generated: {{utc_timestamp}} · Continues from: {{prev_handoff_path_or_none}}
+> Generated: {{utc_timestamp}} · Archived predecessor: {{archived_snapshot_path_or_none}}
 > Variant of the general template, tuned for building a feature mid-flight. Read top-to-bottom.
+> This file lives at the stable path `handoffs/handoff.md` — updated in place, not re-created per write.
 
 ## Metadata
 - Project: {{project_path}}
@@ -63,5 +64,5 @@ Expected: {{healthy_result}}
 - {{unanswered_user_question_or_NONE}}
 
 ## Handoff Chain
-- Continues from: {{prev_handoff_path_or_none}}
-- This doc: {{this_handoff_path}}
+- This doc: `handoffs/handoff.md` (stable — always the current state, updated in place)
+- Archived predecessor: {{archived_snapshot_path_or_none}} (set only when this write archived-and-compacted a prior version over the size threshold — see `ref/pipeline.md` step 5)

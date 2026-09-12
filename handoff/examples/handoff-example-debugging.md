@@ -1,7 +1,8 @@
 # Handoff — intermittent 500 on /reports export (debugging)
 
-> Generated: 2026-05-30T15-30-00-000Z · Continues from: none
+> Generated: 2026-05-30T15-30-00-000Z · Archived predecessor: none (first handoff for this project)
 > Variant of the general template, tuned for an in-progress investigation. Read top-to-bottom.
+> This file lives at the stable path `handoffs/handoff.md` — updated in place, not re-created per write.
 
 ## Metadata
 - Project: /home/dev/acme-api
@@ -70,5 +71,7 @@ Expected once fixed: 20/20 return 200; `pg_pool_waiting` stays ≤1; export test
 - None outstanding from the user.
 
 ## Handoff Chain
-- Continues from: none
-- This doc: handoffs/handoff-2026-05-30T15-30-00-000Z-alex-chen.md
+- This doc: `handoffs/handoff.md` (stable — always the current state, updated in place)
+- Archived predecessor: none (first handoff for this project; would become e.g.
+  `handoffs/.archive/handoff-2026-05-30T15-30-00-000Z-alex-chen.md` the first time this file
+  crosses the ~30KB size threshold in `ref/pipeline.md` step 5)

@@ -25,7 +25,11 @@ false confidence. Reject and fix the draft until every box is true.
 - [ ] Metadata records the live git branch + HEAD + clean/dirty (from `git rev-parse`/`status`).
 - [ ] The Verification block has commands a fresh agent can run immediately, plus expected result.
 - [ ] Any unanswered user/caller question is preserved VERBATIM in Open Questions.
-- [ ] If a prior handoff exists, the Handoff Chain `Continues from` link is set and content merged.
+- [ ] If `handoffs/handoff.md` already existed, this write merged into it (Done promoted, stale
+      items dropped/refreshed) rather than blindly overwriting it.
+- [ ] If the merged draft was at/over the size threshold (`ref/pipeline.md` step 5, ~30KB), the
+      full prior content was archived unabridged to `handoffs/.archive/` BEFORE the compact rewrite,
+      and Handoff Chain → `Archived predecessor` points at that archived file.
 
 ## Discipline
 - [ ] The document does NOT continue the task or answer the conversation's questions.

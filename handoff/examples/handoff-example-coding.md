@@ -1,7 +1,8 @@
 # Handoff — JWT refresh-token endpoint (feature build)
 
-> Generated: 2026-05-30T12-00-00-000Z · Continues from: none
+> Generated: 2026-05-30T12-00-00-000Z · Archived predecessor: none (first handoff for this project)
 > Variant of the general template, tuned for building a feature mid-flight. Read top-to-bottom.
+> This file lives at the stable path `handoffs/handoff.md` — updated in place, not re-created per write.
 
 ## Metadata
 - Project: /home/dev/acme-api
@@ -86,5 +87,7 @@ Expected: rotation.test.ts 3/3 pass; full auth suite 90/90; reuse of a consumed 
   answered; current code only 409s. Confirm before closing the rotation slice.
 
 ## Handoff Chain
-- Continues from: none
-- This doc: handoffs/handoff-2026-05-30T12-00-00-000Z-jordan-lee.md
+- This doc: `handoffs/handoff.md` (stable — always the current state, updated in place)
+- Archived predecessor: none (first handoff for this project; would become e.g.
+  `handoffs/.archive/handoff-2026-05-30T12-00-00-000Z-jordan-lee.md` the first time this file
+  crosses the ~30KB size threshold in `ref/pipeline.md` step 5)

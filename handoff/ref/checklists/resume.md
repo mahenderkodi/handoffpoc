@@ -1,6 +1,7 @@
 # Resume checklist — for the agent RECEIVING a handoff
 
-You were given a handoff document (a `handoffs/handoff-*.md` file, or a `<handoff-context>` block).
+You were given a handoff document — the stable `handoffs/handoff.md` file, an archived snapshot
+under `handoffs/.archive/` (`handoff-<UTC>-<author>.md`), or a `<handoff-context>` block.
 Do this before you touch any code.
 
 1. **Read the whole document top-to-bottom first.** Do not start from the Next Step in isolation.
@@ -17,3 +18,8 @@ Do this before you touch any code.
    latest instruction overrides the recorded plan. If nothing remains to do, say so briefly — do not
    invent busywork.
 7. **Start at the Immediate Next Step**, then verify with the document's Verification block.
+
+If you were pointed at an archived snapshot rather than the live file, check whether
+`handoffs/handoff.md` also exists and is newer — it is the current state; the archived snapshot is
+historical detail the live file may have already compacted away (see `ref/pipeline.md` step 5).
+Prefer the live file when both exist.

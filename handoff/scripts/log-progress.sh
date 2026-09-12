@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
-# handoff-hook-test (jq verified)
 # PostToolUse hook: mechanically logs what changed, for the handoff skill's
 # periodic-synthesis auto-update mode. Never blocks or fails the tool call
 # it's watching -- always exits 0, writes nothing to stdout.
 #
 # This is OPTIONAL tooling on top of the handoff skill, not part of the
 # skill's core pipeline -- the skill itself stays dependency-free. Only
-# needed if you want handoffs/.progress.log to feed automatic updates
-# (see trigger-handoff-update.sh and README.md's "Automatic updates" section).
+# needed if you want handoffs/.internal/.progress.log to feed automatic
+# updates (see trigger-handoff-update.sh and README.md's "Automatic
+# updates" section).
+#
+# Writes to handoffs/.internal/ -- a dedicated, out-of-the-way subfolder --
+# deliberately, not directly into handoffs/. handoffs/ itself should only
+# ever show what a developer actually wants to see day to day (handoff.md,
+# and Archive/ if it exists); this raw mechanical log has no standalone
+# value to a developer and is purely internal fuel for trigger-handoff-update.sh.
 #
 # Requires: jq. If jq isn't installed, this silently no-ops (never fails
 # the tool call it's attached to).
@@ -47,7 +53,7 @@ esac
 [ -z "$detail" ] && exit 0
 
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-log_dir="$repo_root/handoffs"
+log_dir="$repo_root/handoffs/.internal"
 mkdir -p "$log_dir" 2>/dev/null
 
 ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"

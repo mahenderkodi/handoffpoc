@@ -78,13 +78,51 @@ Run `ref/checklists/quality.md`. Reject and fix the draft if it:
 
 ## 5. Write the file
 
-Save to `handoffs/handoff-<UTC-timestamp>-<author>.md` **in the working project** (not in this
-skill's repo). The timestamp is ISO 8601 with `:` and `.` replaced by `-` — oh-my-pi's
-`createHandoffFileName`, extended with an author slug:
+Save to the single **stable path** `handoffs/handoff.md` **in the working project** (not in this
+skill's repo) — update it in place. Do not create a new timestamped file on every write; the old
+per-write `handoff-<UTC-timestamp>-<author>.md` naming is now reserved for **archived snapshots
+only** (see "Archive on size threshold" below). Create the `handoffs/` directory if missing.
 
-```
-new Date().toISOString().replace(/[:.]/g, "-")  ->  2026-05-30T12-00-00-000Z
-```
+**Merge, don't overwrite.** If `handoffs/handoff.md` already exists, this write is an update to it:
+keep all still-relevant prior info, promote In Progress → Done, refresh the Immediate Next Step, and
+drop or update stale Open Questions (oh-my-pi's `compaction-update-summary` pattern) — the same
+discipline as before, just applied to one persistent file instead of a fresh one each time.
+
+**Archive on size threshold — never delete project history, only relocate.** After drafting the
+merged content, check its size before writing it:
+- `handoffs/handoff.md` over **~30KB** → too large to stay skimmable as a single current-state
+  document.
+
+If the handoff draft is over threshold: first copy the FULL merged draft, unabridged, to
+`handoffs/.archive/handoff-<UTC-timestamp>-<author>.md` (create `handoffs/.archive/` if missing),
+using the same timestamp+author-slug convention described below. Then write a **compact** version
+to `handoffs/handoff.md` containing only: Metadata, Current State, still-open Key Decisions, the
+active blocker, the single Immediate Next Step, and any still-unanswered Open Question — plus a
+`Handoff Chain` → `Archived predecessor:` line pointing at the file you just archived. Everything
+else that no longer fits is not lost, only relocated: the full detail is still readable in
+`handoffs/.archive/`, in chronological + author order via `ls`/`sort`, exactly as the old per-write
+convention was.
+
+This whole mechanism is about **document size**, a completely different problem from **context-
+window size**: it keeps `handoffs/handoff.md` itself small enough to read in one pass, regardless
+of how a host's own context-compaction (e.g. Claude Code's `PreCompact`) behaves. Use both — they
+solve different things.
+
+**`handoffs/.internal/` is a separate concern: internal working data, not project history.** If
+you're using the optional automatic-update add-on (`scripts/log-progress.sh` +
+`scripts/trigger-handoff-update.sh`), its mechanical progress log lives at
+`handoffs/.internal/.progress.log` — deliberately out of `handoffs/` itself, so that folder only
+ever shows what a developer actually wants to see (`handoff.md`; `.archive/` stays out of a plain
+`ls` too, dot-prefixed like `.internal/`, though unlike `.internal/` it holds real project history
+and is never deleted from). Unlike the "never
+delete, only relocate" rule above for handoff content, `.progress.log` is deliberately deleted
+once a synthesis run successfully merges it into `handoff.md` — it's consumed input with no
+standalone value once consumed, not a record worth keeping. `trigger-handoff-update.sh` handles
+this itself (delete on a successful run; rotate to a timestamped sibling under `.internal/`, or to
+`handoffs/.archive/` if it happens to have grown past ~1MB, only on a *failed* run, so failure
+evidence isn't silently lost). This skill's own manual pipeline never touches `.internal/`
+directly — it only ever reads `handoffs/.internal/.progress.log` as step 1 evidence when invoked
+headlessly by that script.
 
 **Author slug.** Take the identity resolved in step 1 — `gh api user --jq .login` when the `gh`
 CLI is installed and authenticated (the GitHub account actually pushing right now), else `git
@@ -94,25 +132,23 @@ replace every run of characters outside `[a-z0-9]` with a single `-`, and trim l
 Resolving from the authenticated pusher rather than a fixed local display name is what makes this
 dynamic across developers: run the skill under a different person's `gh` login (or, absent `gh`,
 their own `git config user.name`) and their identity appears automatically — nothing here is
-hardcoded to one person or one machine.
+hardcoded to one person or one machine. This slug convention now applies only to files written
+under `handoffs/.archive/` (the live file has no timestamp in its name):
 
 ```
 gh api user --jq .login  ->  "mahenderkodi"  ->  mahenderkodi
-handoff-2026-05-30T12-00-00-000Z-mahenderkodi.md
+handoffs/.archive/handoff-2026-05-30T12-00-00-000Z-mahenderkodi.md
 ```
 
-Timestamp stays first so `ls`/`sort` on `handoffs/` still lists files in chronological order;
-the author slug is a suffix, filterable with e.g. `ls handoffs/ | grep mahenderkodi`.
-
-Create the `handoffs/` directory if missing. **Chaining:** if a prior handoff exists, set the
-Handoff Chain `Continues from` link, and when re-handing-off, *merge* rather than overwrite — keep
-all still-relevant prior info, promote In Progress → Done, refresh Next Steps and drop or update
-stale pending questions (oh-my-pi's `compaction-update-summary` pattern).
+Timestamp stays first so `ls`/`sort` on `handoffs/.archive/` still lists snapshots in
+chronological order; the author slug is a suffix, filterable with e.g. `ls handoffs/.archive/ |
+grep mahenderkodi`.
 
 ## 6. Emit the resume primitive + report
 
 Print:
-1. the absolute saved path, and
+1. the absolute path to `handoffs/handoff.md` (and, if an archive-and-compact just happened, the
+   archived snapshot's path too), and
 2. a one-line summary of the state, then
 3. the ready-to-paste resume block (oh-my-pi's `createHandoffContext` wrapper, adapted):
 
@@ -153,3 +189,5 @@ manual trigger, omit this — the user is present and steering.
 | Hallucinated paths/counts | Written from memory | Gather mechanically, never from recall (step 1) |
 | Leaks credentials | Pasted raw command output | Quality gate rejects secrets (step 4) |
 | Unclear who authored a handoff | No identity captured | Author from the authenticated GitHub login (`gh`), falling back to `git config`, in filename + Metadata (steps 1, 5) |
+| Handoff document grows unbounded, hard to skim | Every write kept appending/creating full files forever | Stable `handoffs/handoff.md` + size-triggered archive-and-compact, never a delete (step 5) |
+| Internal bookkeeping files clutter the developer's view | Mechanical log + auto-update log written directly into `handoffs/` alongside the file a developer actually reads | `handoffs/.internal/` holds `.progress.log` / `.last-auto-update.log` out of sight; consumed progress logs are deleted on success rather than piling up (step 5) |
